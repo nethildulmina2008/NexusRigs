@@ -59,6 +59,7 @@ let orders = [];
 const firebaseConfig = {
   apiKey: "AIzaSyDmo8Z16XTIC7AiwpaSFGwywCFv-iWtB7I",
   authDomain: "nexus-2722e.firebaseapp.com",
+  databaseURL: "https://nexus-2722e-default-rtdb.firebaseio.com",
   projectId: "nexus-2722e",
   storageBucket: "nexus-2722e.firebasestorage.app",
   messagingSenderId: "1003347378649",
@@ -66,32 +67,37 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+try {
+    firebase.initializeApp(firebaseConfig);
+} catch (e) {}
+
 const database = firebase.database();
 
 // Listen to products in Realtime Database
 database.ref('products').on('value', (snapshot) => {
     let data = snapshot.val();
     if (data) {
-        // Firebase might store arrays as objects if there are empty slots. Ensure it's an array.
         products = Array.isArray(data) ? data : Object.values(data);
     } else {
         products = defaultProducts;
         saveProducts(); // Seed initial data
     }
     
-    // Auto-refresh UI on changes
-    if (currentCategory) {
-        renderCategoryProducts();
-    }
+    if (currentCategory) renderCategoryProducts();
     const adminPage = document.getElementById('page-admin');
     if (adminPage && adminPage.classList.contains('active') && document.getElementById('tab-admin-products').classList.contains('active')) {
         renderAdminProducts();
     }
+}, (error) => {
+    console.error("Firebase Read Error: ", error);
+    alert("Database sync failed. Is your Firebase Database Rules set to true? Error: " + error.message);
 });
 
 function saveProducts() {
-    database.ref('products').set(products);
+    database.ref('products').set(products).catch(error => {
+        console.error("Firebase Write Error: ", error);
+        alert("Failed to save. Check your Firebase permissions! Error: " + error.message);
+    });
 }
 
 // Listen to orders in Realtime Database
