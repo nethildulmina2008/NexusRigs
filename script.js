@@ -1,4 +1,3 @@
-// --- DATA: Categories & Products ---
 const productCategories = [
     { id: "CPU", name: "Processors (CPU)", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
     { id: "Motherboard", name: "Motherboards", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
@@ -11,7 +10,7 @@ const productCategories = [
     { id: "Laptop", name: "Laptops", image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" }
 ];
 
-const products = [
+const defaultProducts = [
     // CPUs
     { id: 1, name: "Intel Core i9-14900K", category: "CPU", condition: "Brand New", price: 220000, image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&w=600&q=80", description: "24-Core, 32-Thread Unlocked Processor." },
     { id: 2, name: "AMD RYZEN 5 3400G TRAY", category: "CPU", condition: "Used", price: 27500, image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&w=600&q=80", description: "Without cooler, 03 Months Warranty." },
@@ -53,14 +52,49 @@ const products = [
     { id: 22, name: "Lenovo Legion 5 (Used)", category: "Laptop", condition: "Used", price: 290000, image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&w=600&q=80", description: "AMD Ryzen 7, RTX 3060, 16GB RAM." }
 ];
 
+let products = JSON.parse(localStorage.getItem('nexus_products')) || defaultProducts;
+
+function saveProducts() {
+    localStorage.setItem('nexus_products', JSON.stringify(products));
+}
+
+let isAdmin = localStorage.getItem('nexus_admin') === 'true';
+
 // --- APP STATE & ROUTING ---
 let cart = [];
 let currentFilter = 'All';
 let currentCategory = null;
 
-const formatLKR = (num) => 'Rs. ' + num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const formatLKR = (num) => 'Rs. ' + parseInt(num).toLocaleString('en-US');
+
+function updateNavAuth() {
+    const loginContainer = document.getElementById('loginBtnContainer');
+    if (!loginContainer) return;
+    
+    if (isAdmin) {
+        loginContainer.innerHTML = `
+            <div class="login-btn-top" onclick="navigateTo('admin')" style="background:var(--accent-purple); border-color:var(--accent-purple);">
+                <i class="fas fa-shield-alt"></i> <span>Admin</span>
+            </div>
+            <div class="login-btn-top" onclick="logoutAdmin()" style="margin-left:5px;">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+        `;
+    } else {
+        loginContainer.innerHTML = `
+            <div class="login-btn-top" onclick="navigateTo('login')">
+                <i class="fas fa-user-circle"></i> <span>Login</span>
+            </div>
+        `;
+    }
+}
 
 function navigateTo(pageId) {
+    if (pageId === 'admin' && !isAdmin) {
+        alert('Access Denied');
+        return;
+    }
+
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById('page-' + pageId).classList.add('active');
     
@@ -69,6 +103,8 @@ function navigateTo(pageId) {
         document.getElementById('categoryGrid').style.display = 'grid';
         document.getElementById('productView').style.display = 'none';
         document.getElementById('shopTitle').innerText = 'Component Categories';
+    } else if(pageId === 'admin') {
+        renderAdminProducts();
     }
 }
 
@@ -273,6 +309,124 @@ menuBtn.addEventListener('click', () => {
 });
 window.addEventListener('resize', checkMobileMenu);
 
+// --- ADMIN SYSTEM ---
+function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const pass = document.getElementById('loginPass').value;
+
+    if (email === 'nethildulmina2008@gmail.com' && pass === 'SANdeepa@346') {
+        isAdmin = true;
+        localStorage.setItem('nexus_admin', 'true');
+        alert('Admin Login Successful!');
+        updateNavAuth();
+        navigateTo('admin');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPass').value = '';
+    } else {
+        alert('Invalid Admin Credentials!');
+    }
+}
+
+window.logoutAdmin = function() {
+    isAdmin = false;
+    localStorage.removeItem('nexus_admin');
+    updateNavAuth();
+    navigateTo('home');
+    alert('Logged out from Admin Panel.');
+};
+
+// Admin UI Logic
+function renderAdminProducts() {
+    const tbody = document.getElementById('adminTableBody');
+    tbody.innerHTML = '';
+    
+    products.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><img src="${p.image}" class="admin-prod-img" alt="product"></td>
+            <td>${p.name} <br> <span style="font-size:0.8rem; color:var(--text-muted);">${p.condition}</span></td>
+            <td>${p.category}</td>
+            <td>${formatLKR(p.price)}</td>
+            <td>
+                <button class="action-btn edit-btn" onclick="openAdminModal(${p.id})"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete-btn" onclick="deleteAdminProduct(${p.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+window.openAdminModal = function(id = null) {
+    document.getElementById('adminModalOverlay').style.display = 'block';
+    document.getElementById('adminModal').style.display = 'block';
+    const form = document.getElementById('adminProductForm');
+    form.reset();
+    document.getElementById('editProductId').value = '';
+    document.getElementById('adminModalTitle').innerText = 'Add Product';
+    
+    if (id !== null) {
+        document.getElementById('adminModalTitle').innerText = 'Edit Product';
+        const p = products.find(prod => prod.id === id);
+        if(p) {
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('pName').value = p.name;
+            document.getElementById('pCategory').value = p.category;
+            document.getElementById('pCondition').value = p.condition;
+            document.getElementById('pPrice').value = p.price;
+            document.getElementById('pImage').value = p.image;
+            document.getElementById('pDesc').value = p.description;
+        }
+    }
+};
+
+window.closeAdminModal = function() {
+    document.getElementById('adminModalOverlay').style.display = 'none';
+    document.getElementById('adminModal').style.display = 'none';
+};
+
+window.saveAdminProduct = function(e) {
+    e.preventDefault();
+    const idVal = document.getElementById('editProductId').value;
+    
+    const productData = {
+        name: document.getElementById('pName').value,
+        category: document.getElementById('pCategory').value,
+        condition: document.getElementById('pCondition').value,
+        price: parseFloat(document.getElementById('pPrice').value),
+        image: document.getElementById('pImage').value,
+        description: document.getElementById('pDesc').value
+    };
+
+    if (idVal) {
+        // Edit existing
+        const index = products.findIndex(p => p.id == idVal);
+        if(index !== -1) {
+            products[index] = { ...products[index], ...productData };
+        }
+    } else {
+        // Add new
+        const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+        productData.id = newId;
+        products.push(productData);
+    }
+    
+    saveProducts();
+    closeAdminModal();
+    renderAdminProducts();
+    
+    // Refresh shop view if user goes back to components page
+    renderCategoryProducts(); 
+};
+
+window.deleteAdminProduct = function(id) {
+    if(confirm('Are you sure you want to delete this product?')) {
+        products = products.filter(p => p.id !== id);
+        saveProducts();
+        renderAdminProducts();
+    }
+};
+
 // --- CHATBOT ---
 const chatWidget = document.getElementById('chatWidget');
 const chatHeader = document.getElementById('chatHeader');
@@ -307,6 +461,7 @@ chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessag
 
 // Init
 checkMobileMenu();
+updateNavAuth();
 
 // Auth Logic
 window.switchAuth = function(mode) {

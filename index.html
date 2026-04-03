@@ -33,8 +33,10 @@
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count" id="cartCount">0</span>
             </div>
-            <div class="login-btn-top" onclick="navigateTo('login')">
-                <i class="fas fa-user-circle"></i> <span>Login</span>
+            <div id="loginBtnContainer" style="display: flex;">
+                <div class="login-btn-top" onclick="navigateTo('login')">
+                    <i class="fas fa-user-circle"></i> <span>Login</span>
+                </div>
             </div>
             <i class="fas fa-bars mobile-menu" id="menuBtn"
                 style="font-size: 1.5rem; cursor: pointer; display: none;"></i>
@@ -205,17 +207,17 @@
                 </div>
                 
                 <!-- Login Form -->
-                <form id="loginForm" class="auth-form active-form" onsubmit="event.preventDefault(); alert('Login successful!'); navigateTo('home');">
+                <form id="loginForm" class="auth-form active-form" onsubmit="handleLogin(event)">
                     <h2>Welcome Back!</h2>
                     <p style="color: var(--text-muted); margin-bottom: 2rem;">Log in to access your account.</p>
                     
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Email Address" required>
+                        <input type="email" id="loginEmail" placeholder="Email Address" required>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" required>
+                        <input type="password" id="loginPass" placeholder="Password" required>
                     </div>
                     <div style="text-align: right; margin-bottom: 1rem;">
                         <a href="#" style="color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
@@ -244,6 +246,81 @@
                 </form>
             </div>
         </section>
+    </div>
+
+    <!-- Page: ADMIN PANEL -->
+    <div id="page-admin" class="page">
+        <section class="admin-sec">
+            <div class="admin-header">
+                <h2 class="section-title" style="margin-bottom:0;">Admin Dashboard</h2>
+                <button class="btn" onclick="openAdminModal()">+ Add Product</button>
+            </div>
+            
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <!-- Admin products injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin Product Modal -->
+    <div class="admin-modal-overlay" id="adminModalOverlay"></div>
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-modal-header">
+            <h3 id="adminModalTitle">Add Product</h3>
+            <i class="fas fa-times" style="cursor:pointer;" onclick="closeAdminModal()"></i>
+        </div>
+        <form class="admin-modal-body" id="adminProductForm" onsubmit="saveAdminProduct(event)">
+            <input type="hidden" id="editProductId" value="">
+            
+            <label>Product Name</label>
+            <input type="text" id="pName" required>
+
+            <label>Category</label>
+            <select id="pCategory" required>
+                <option value="CPU">Processors (CPU)</option>
+                <option value="Motherboard">Motherboards</option>
+                <option value="RAM">Memory (RAM)</option>
+                <option value="Storage">SSD / HDD</option>
+                <option value="GPU">Graphics Cards</option>
+                <option value="Power Supply">Power Supply</option>
+                <option value="Casing">Casings</option>
+                <option value="Cooler">Coolers</option>
+                <option value="Laptop">Laptops</option>
+            </select>
+
+            <label>Condition</label>
+            <select id="pCondition" required>
+                <option value="Brand New">Brand New</option>
+                <option value="Used">Used</option>
+            </select>
+
+            <label>Price (LKR)</label>
+            <input type="number" id="pPrice" required>
+
+            <label>Image URL</label>
+            <input type="url" id="pImage" required>
+
+            <label>Description</label>
+            <textarea id="pDesc" rows="3" required></textarea>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                <button type="button" class="btn btn-secondary" onclick="closeAdminModal()">Cancel</button>
+                <button type="submit" class="btn">Save Product</button>
+            </div>
+        </form>
     </div>
 
     <!-- Footer -->
