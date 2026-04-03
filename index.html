@@ -197,6 +197,46 @@
         </section>
     </div>
 
+    <!-- Page: CHECKOUT -->
+    <div id="page-checkout" class="page">
+        <section class="checkout-sec">
+            <h2 class="section-title">Secure Checkout</h2>
+            <div class="checkout-container">
+                <form class="checkout-form" id="checkoutForm" onsubmit="placeOrder(event)">
+                    <h3>Billing Details</h3>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="chkName" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="chkPhone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="chkAddress" placeholder="Delivery Address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-city"></i>
+                        <input type="text" id="chkCity" placeholder="City / Town" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Place Order (Cash on Delivery)</button>
+                </form>
+                
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div id="checkoutItemsContainer" style="margin-top: 1rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 1rem; margin-bottom: 1rem; max-height: 250px; overflow-y: auto;">
+                        <!-- Checkout items injected here -->
+                    </div>
+                    <div class="checkout-total">
+                        <span style="font-size: 1.2rem; font-weight: bold;">Total to Pay:</span>
+                        <span id="checkoutTotalValue" style="color: var(--accent-cyan); font-weight: bold; font-size: 1.5rem;">Rs. 0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- Page: LOGIN / REGISTER -->
     <div id="page-login" class="page">
         <section class="login-sec">
@@ -251,26 +291,60 @@
     <!-- Page: ADMIN PANEL -->
     <div id="page-admin" class="page">
         <section class="admin-sec">
-            <div class="admin-header">
+            <div class="admin-header" style="flex-direction: column; align-items: flex-start; gap: 1rem;">
                 <h2 class="section-title" style="margin-bottom:0;">Admin Dashboard</h2>
-                <button class="btn" onclick="openAdminModal()">+ Add Product</button>
+                <div class="auth-tabs" style="width: 100%; margin-bottom: 0;">
+                    <button class="auth-tab active" id="tab-admin-products" onclick="switchAdminTab('products')">Products</button>
+                    <button class="auth-tab" id="tab-admin-orders" onclick="switchAdminTab('orders')">Orders</button>
+                </div>
             </div>
             
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminTableBody">
-                        <!-- Admin products injected here -->
-                    </tbody>
-                </table>
+            <!-- Products View -->
+            <div id="admin-products-view">
+                <div class="admin-header" style="border: none; padding-top: 0; margin-top: 1rem;">
+                    <h3>Manage Products</h3>
+                    <button class="btn" onclick="openAdminModal()">+ Add Product</button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- Admin products injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders View -->
+            <div id="admin-orders-view" style="display: none; margin-top: 1rem;">
+                <div class="admin-header" style="border: none; padding-top: 0;">
+                    <h3>Recent Orders</h3>
+                    <button class="btn btn-secondary" onclick="clearOrders()"><i class="fas fa-trash"></i> Clear</button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer Info</th>
+                                <th>Items</th>
+                                <th>Total (Rs.)</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrdersTableBody">
+                            <!-- Orders injected here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </div>
@@ -380,7 +454,7 @@
                 <span>Total:</span>
                 <span id="cartTotalValue">$0.00</span>
             </div>
-            <button class="btn" style="width: 100%; margin-top: 1rem;">Checkout</button>
+            <button class="btn" style="width: 100%; margin-top: 1rem;" onclick="proceedToCheckout()">Checkout</button>
         </div>
     </div>
 

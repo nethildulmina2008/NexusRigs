@@ -58,6 +58,12 @@ function saveProducts() {
     localStorage.setItem('nexus_products', JSON.stringify(products));
 }
 
+let orders = JSON.parse(localStorage.getItem('nexus_orders')) || [];
+
+function saveOrders() {
+    localStorage.setItem('nexus_orders', JSON.stringify(orders));
+}
+
 let isAdmin = localStorage.getItem('nexus_admin') === 'true';
 
 // --- APP STATE & ROUTING ---
@@ -105,6 +111,8 @@ function navigateTo(pageId) {
         document.getElementById('shopTitle').innerText = 'Component Categories';
     } else if(pageId === 'admin') {
         renderAdminProducts();
+        renderAdminOrders();
+        switchAdminTab('products');
     }
 }
 
@@ -279,6 +287,69 @@ function updateCartIcon() {
     document.getElementById('cartCount').innerText = cart.length;
 }
 
+// --- CHECKOUT LOGIC ---
+window.proceedToCheckout = function() {
+    if (cart.length === 0) {
+        alert("Your cart is empty. Add some components first!");
+        return;
+    }
+    closeCart();
+    navigateTo('checkout');
+    renderCheckoutSummary();
+};
+
+function renderCheckoutSummary() {
+    const container = document.getElementById('checkoutItemsContainer');
+    const totalEl = document.getElementById('checkoutTotalValue');
+    container.innerHTML = '';
+    
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price;
+        container.innerHTML += `
+            <div class="checkout-item">
+                <img src="${item.image}" alt="">
+                <div class="checkout-item-details">
+                    <h4>${item.name}</h4>
+                    <div style="color:var(--accent-cyan); font-weight:bold;">${formatLKR(item.price)}</div>
+                </div>
+            </div>
+        `;
+    });
+    totalEl.innerText = formatLKR(total);
+}
+
+window.placeOrder = function(e) {
+    e.preventDefault();
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const orderData = {
+        id: "ORD-" + new Date().getTime(),
+        date: new Date().toLocaleDateString(),
+        customer: document.getElementById('chkName').value,
+        phone: document.getElementById('chkPhone').value,
+        address: document.getElementById('chkAddress').value + ", " + document.getElementById('chkCity').value,
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + item.price, 0)
+    };
+
+    orders.push(orderData);
+    saveOrders();
+
+    alert("Order placed successfully! Thank you for choosing Nexus Rigs.");
+    
+    // Clear cart
+    cart = [];
+    updateCartIcon();
+    renderCart();
+    document.getElementById('checkoutForm').reset();
+    
+    navigateTo('home');
+};
+
 // --- MOBILE MENU ---
 const menuBtn = document.getElementById('menuBtn');
 const navLinks = document.getElementById('navLinks');
@@ -424,6 +495,58 @@ window.deleteAdminProduct = function(id) {
         products = products.filter(p => p.id !== id);
         saveProducts();
         renderAdminProducts();
+    }
+};
+
+window.switchAdminTab = function(tabId) {
+    document.getElementById('tab-admin-products').classList.remove('active');
+    document.getElementById('tab-admin-orders').classList.remove('active');
+    
+    document.getElementById('admin-products-view').style.display = 'none';
+    document.getElementById('admin-orders-view').style.display = 'none';
+    
+    document.getElementById('tab-admin-' + tabId).classList.add('active');
+    document.getElementById('admin-' + tabId + '-view').style.display = 'block';
+};
+
+function renderAdminOrders() {
+    const tbody = document.getElementById('adminOrdersTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    if(orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No orders found.</td></tr>';
+        return;
+    }
+
+    // Sort newest first
+    const sortedOrders = [...orders].reverse();
+    
+    sortedOrders.forEach(o => {
+        const itemsList = o.items.map(i => i.name).join(', ');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${o.id}</strong></td>
+            <td>
+                ${o.customer}<br>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+                    <i class="fas fa-phone" style="margin-right:4px;"></i>${o.phone} <br>
+                    <i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>${o.address}
+                </div>
+            </td>
+            <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${itemsList}">${itemsList}</td>
+            <td style="color:var(--accent-cyan); font-weight:bold;">${formatLKR(o.total)}</td>
+            <td>${o.date}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+window.clearOrders = function() {
+    if(confirm("Are you sure you want to delete all order history? This cannot be undone.")) {
+        orders = [];
+        saveOrders();
+        renderAdminOrders();
     }
 };
 
