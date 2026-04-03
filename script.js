@@ -162,5 +162,96 @@ menuBtn.addEventListener('click', () => {
 
 window.addEventListener('resize', checkMobileMenu);
 
+// Cart toggle and render
+const cartModal = document.getElementById('cartModal');
+const cartOverlay = document.getElementById('cartOverlay');
+const closeCartBtn = document.getElementById('closeCartBtn');
+const cartBtnIcon = document.getElementById('cartBtn');
+const cartItemsContainer = document.getElementById('cartItemsContainer');
+const cartTotalValue = document.getElementById('cartTotalValue');
+
+cartBtnIcon.addEventListener('click', () => {
+    cartModal.classList.add('open');
+    cartOverlay.style.display = 'block';
+    renderCart();
+});
+
+function closeCart() {
+    cartModal.classList.remove('open');
+    cartOverlay.style.display = 'none';
+}
+
+closeCartBtn.addEventListener('click', closeCart);
+cartOverlay.addEventListener('click', closeCart);
+
+function renderCart() {
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+    
+    if(cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p style="text-align:center; color:gray; margin-top:20px;">Your cart is empty.</p>';
+    } else {
+        cart.forEach((item, index) => {
+            total += item.price;
+            cartItemsContainer.innerHTML += `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="">
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <div style="color:var(--accent-cyan); font-weight:bold;">$${item.price.toFixed(2)}</div>
+                    </div>
+                    <i class="fas fa-trash" style="margin-top:auto; margin-bottom:auto; margin-left:auto; cursor:pointer; color:#ff4d4d; font-size:1.2rem;" onclick="removeFromCart(${index})"></i>
+                </div>
+            `;
+        });
+    }
+    cartTotalValue.innerText = `$${total.toFixed(2)}`;
+}
+
+window.removeFromCart = function(index) {
+    cart.splice(index, 1);
+    updateCartIcon();
+    renderCart();
+};
+
+// Chat widget logic
+const chatWidget = document.getElementById('chatWidget');
+const chatHeader = document.getElementById('chatHeader');
+const chatBody = document.getElementById('chatBody');
+const chatInput = document.getElementById('chatInput');
+const sendChatBtn = document.getElementById('sendChatBtn');
+
+chatHeader.addEventListener('click', () => {
+    chatWidget.classList.toggle('open');
+});
+
+function sendMessage() {
+    const text = chatInput.value.trim();
+    if(text !== "") {
+        // user msg
+        const uMsg = document.createElement('div');
+        uMsg.className = 'chat-message user-msg';
+        uMsg.innerText = text;
+        chatBody.appendChild(uMsg);
+        
+        chatInput.value = '';
+        chatBody.scrollTop = chatBody.scrollHeight;
+        
+        // bot reply
+        setTimeout(() => {
+            const bMsg = document.createElement('div');
+            bMsg.className = 'chat-message bot-msg';
+            bMsg.innerHTML = `ඔබට සහාය වීමට මා සූදානම්! කරුණාකර අපගේ WhatsApp අංකය හරහා සම්බන්ධ වන්න: <br><br> <a href="https://wa.me/94741304285" target="_blank" style="color:var(--accent-cyan); font-weight:bold; text-decoration:none;"><i class="fab fa-whatsapp"></i> +94 74 130 4285 වෙත පිවිසෙන්න</a>`;
+            chatBody.appendChild(bMsg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }, 1000);
+    }
+}
+
+sendChatBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') sendMessage();
+});
+
 // Initialize
 initStore();
