@@ -59,7 +59,7 @@ let orders = [];
 const firebaseConfig = {
   apiKey: "AIzaSyDmo8Z16XTIC7AiwpaSFGwywCFv-iWtB7I",
   authDomain: "nexus-2722e.firebaseapp.com",
-  databaseURL: "https://nexus-2722e-default-rtdb.firebaseio.com",
+  databaseURL: "https://nexus-2722e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "nexus-2722e",
   storageBucket: "nexus-2722e.firebasestorage.app",
   messagingSenderId: "1003347378649",
