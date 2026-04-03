@@ -7,7 +7,8 @@ const productCategories = [
     { id: "GPU", name: "Graphics Cards", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
     { id: "Power Supply", name: "Power Supply", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
     { id: "Casing", name: "Casings", image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Cooler", name: "Coolers", image: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" }
+    { id: "Cooler", name: "Coolers", image: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
+    { id: "Laptop", name: "Laptops", image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" }
 ];
 
 const products = [
@@ -44,7 +45,12 @@ const products = [
 
     // Power Supply
     { id: 18, name: "Corsair RM850x 80+ Gold", category: "Power Supply", condition: "Brand New", price: 45000, image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&w=600&q=80", description: "850W Fully modular power supply." },
-    { id: 19, name: "Used 500W Bronze PSU", category: "Power Supply", condition: "Used", price: 8500, image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&w=600&q=80", description: "Standard 500W PSU used for 1 year." }
+    { id: 19, name: "Used 500W Bronze PSU", category: "Power Supply", condition: "Used", price: 8500, image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&w=600&q=80", description: "Standard 500W PSU used for 1 year." },
+
+    // Laptops
+    { id: 20, name: "ASUS ROG Strix G16", category: "Laptop", condition: "Brand New", price: 450000, image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&w=600&q=80", description: "Intel i7 13th Gen, RTX 4060, 16GB RAM, 1TB SSD." },
+    { id: 21, name: "MSI Katana 15", category: "Laptop", condition: "Brand New", price: 380000, image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&w=600&q=80", description: "Intel i7 12th Gen, RTX 3050, 8GB RAM, 512GB SSD." },
+    { id: 22, name: "Lenovo Legion 5 (Used)", category: "Laptop", condition: "Used", price: 290000, image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&w=600&q=80", description: "AMD Ryzen 7, RTX 3060, 16GB RAM." }
 ];
 
 // --- APP STATE & ROUTING ---
@@ -301,3 +307,23 @@ chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessag
 
 // Init
 checkMobileMenu();
+
+// Auth Logic
+window.switchAuth = function(mode) {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    
+    if(mode === 'login') {
+        loginForm.style.display = 'flex';
+        registerForm.style.display = 'none';
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+    } else {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'flex';
+        tabLogin.classList.remove('active');
+        tabRegister.classList.add('active');
+    }
+};

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <!-- Navigation -->
@@ -19,11 +21,23 @@
             <li><a href="#" onclick="navigateTo('build')">Build Guide</a></li>
         </ul>
         <div class="nav-actions">
+            <!-- Hotline -->
+            <div class="hotline" style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
+                <i class="fas fa-phone-alt" style="font-size: 1.8rem; color: var(--accent-cyan);"></i>
+                <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Hotline</span>
+                    <span style="font-size: 1.1rem; font-weight: bold; color: var(--accent-cyan);">(94) 741304285</span>
+                </div>
+            </div>
             <div class="cart-icon" id="cartBtn">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count" id="cartCount">0</span>
             </div>
-            <i class="fas fa-bars mobile-menu" id="menuBtn" style="font-size: 1.5rem; cursor: pointer; display: none;"></i>
+            <div class="login-btn-top" onclick="navigateTo('login')">
+                <i class="fas fa-user-circle"></i> <span>Login</span>
+            </div>
+            <i class="fas fa-bars mobile-menu" id="menuBtn"
+                style="font-size: 1.5rem; cursor: pointer; display: none;"></i>
         </div>
     </nav>
 
@@ -33,11 +47,13 @@
         <section class="hero">
             <div class="hero-content">
                 <h1 class="hero-title">Unleash Ultimate <span class="title-glow">Performance</span></h1>
-                <p class="hero-subtitle">Build your dream machine with our hand-picked selection of premium components. Engineered for creators, designed for gamers.</p>
+                <p class="hero-subtitle">Build your dream machine with our hand-picked selection of premium components.
+                    Engineered for creators, designed for gamers.</p>
                 <button class="btn" onclick="navigateTo('shop')">Start Building</button>
             </div>
             <div class="hero-visual">
-                <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Gaming PC Build" style="border-radius: 20px;">
+                <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Gaming PC Build" style="border-radius: 20px;">
             </div>
         </section>
 
@@ -65,7 +81,7 @@
     <div id="page-shop" class="page">
         <section class="products">
             <h2 class="section-title" id="shopTitle">Component Categories</h2>
-            
+
             <!-- Category View -->
             <div class="category-grid" id="categoryGrid">
                 <!-- Categories injected here -->
@@ -73,9 +89,11 @@
 
             <!-- Product View (Hidden by default) -->
             <div id="productView" style="display: none;">
-                <button class="btn btn-secondary back-btn" onclick="closeCategory()"><i class="fas fa-arrow-left"></i> Back to Categories</button>
-                
-                <div class="filter-container" style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; margin-top: 2rem;">
+                <button class="btn btn-secondary back-btn" onclick="closeCategory()"><i class="fas fa-arrow-left"></i>
+                    Back to Categories</button>
+
+                <div class="filter-container"
+                    style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; margin-top: 2rem;">
                     <button class="filter-btn active" onclick="filterProducts('All', this)">All Parts</button>
                     <button class="filter-btn" onclick="filterProducts('Brand New', this)">Brand New</button>
                     <button class="filter-btn" onclick="filterProducts('Used', this)">Used Parts</button>
@@ -91,14 +109,17 @@
     <!-- Page: BUILD GUIDE -->
     <div id="page-build" class="page">
         <section class="build-guide-sec">
-            <h2 class="section-title">PC Build Guide <span style="font-size:1.2rem; color:var(--text-muted)">(සිංහලෙන්)</span></h2>
+            <h2 class="section-title">PC Build Guide <span
+                    style="font-size:1.2rem; color:var(--text-muted)">(සිංහලෙන්)</span></h2>
             <div class="guide-container">
                 <div class="guide-card">
                     <h3>1. කොටස් තෝරාගැනීම (Choosing Components)</h3>
-                    <p>පළමුව ඔබගේ අවශ්‍යතාවය (Gaming, Coding, හෝ Video Editing) සහ අයවැය (Budget) අනුව ගැලපෙන උපාංග තෝරාගත යුතුය. ප්‍රධාන වශයෙන් අවශ්‍ය වන කොටස්:</p>
+                    <p>පළමුව ඔබගේ අවශ්‍යතාවය (Gaming, Coding, හෝ Video Editing) සහ අයවැය (Budget) අනුව ගැලපෙන උපාංග
+                        තෝරාගත යුතුය. ප්‍රධාන වශයෙන් අවශ්‍ය වන කොටස්:</p>
                     <ul>
                         <li><strong>ප්‍රොසෙසරය (Processor/CPU):</strong> Intel හෝ AMD.</li>
-                        <li><strong>මවු පුවරුව (Motherboard):</strong> CPU එකට ගැලපෙන Socket එකක් සහිත මවු පුවරුවක් විය යුතුය.</li>
+                        <li><strong>මවු පුවරුව (Motherboard):</strong> CPU එකට ගැලපෙන Socket එකක් සහිත මවු පුවරුවක් විය
+                            යුතුය.</li>
                         <li><strong>මතකය (RAM):</strong> අවම 8GB හෝ 16GB (DDR4/DDR5).</li>
                         <li><strong>ගබඩාව (Storage):</strong> වේගවත් ක්‍රියාකාරීත්වයට NVMe SSD එකක් නිර්දේශ කෙරේ.</li>
                         <li><strong>ග්‍රැෆික් කාඩ්පත (Graphics Card/GPU):</strong> Gaming හෝ Graphic වැඩ සඳහා.</li>
@@ -106,14 +127,17 @@
                         <li><strong>කවරය (Casing):</strong> සියලු කොටස් ඇතුළත් කළ හැකි ප්‍රමාණයේ එකක්.</li>
                     </ul>
                 </div>
-                
+
                 <div class="guide-card">
                     <h3>2. මවු පුවරුව සූදානම් කිරීම (Motherboard Setup)</h3>
                     <p>කේසිං එකට දැමීමට පෙර මවු පුවරුව මත කොටස් සවි කිරීම පහසුය.</p>
                     <ul>
-                        <li><strong>CPU එක සවි කිරීම:</strong> මවු පුවරුවේ CPU socket එක විවෘත කර, CPU එකේ ඇති සලකුණු වලට අනුව ඉතා ප්‍රවේශමෙන් තබන්න.</li>
-                        <li><strong>RAM සවි කිරීම:</strong> RAM slots වල ලොක් එක විවෘත කර "ක්ලික්" හඬ ඇසෙන තෙක් තද කරන්න.</li>
-                        <li><strong>SSD සවි කිරීම:</strong> M.2 SSD එකක් නම් අදාළ slot එකට ඇතුළු කර කුඩා ඇණයක් මඟින් සවි කරන්න.</li>
+                        <li><strong>CPU එක සවි කිරීම:</strong> මවු පුවරුවේ CPU socket එක විවෘත කර, CPU එකේ ඇති සලකුණු
+                            වලට අනුව ඉතා ප්‍රවේශමෙන් තබන්න.</li>
+                        <li><strong>RAM සවි කිරීම:</strong> RAM slots වල ලොක් එක විවෘත කර "ක්ලික්" හඬ ඇසෙන තෙක් තද
+                            කරන්න.</li>
+                        <li><strong>SSD සවි කිරීම:</strong> M.2 SSD එකක් නම් අදාළ slot එකට ඇතුළු කර කුඩා ඇණයක් මඟින් සවි
+                            කරන්න.</li>
                     </ul>
                 </div>
 
@@ -121,7 +145,8 @@
                     <h3>3. CPU Cooler එක සවි කිරීම</h3>
                     <p>CPU එක රත් වීම පාලනය කිරීමට මෙය අත්‍යවශ්‍යයි.</p>
                     <ul>
-                        <li>CPU එක මත Thermal Paste ස්වල්පයක් තවරා ඒ මත Cooler එක තබා තද කරන්න. (සමහර Cooler වල thermal paste කලින්ම තවරා ඇත).</li>
+                        <li>CPU එක මත Thermal Paste ස්වල්පයක් තවරා ඒ මත Cooler එක තබා තද කරන්න. (සමහර Cooler වල thermal
+                            paste කලින්ම තවරා ඇත).</li>
                         <li>Cooler එකේ වයරය "CPU_FAN" ලෙස සඳහන් පින් එකට සම්බන්ධ කරන්න.</li>
                     </ul>
                 </div>
@@ -138,7 +163,8 @@
                     <h3>5. බල සැපයුම (PSU) සහ GPU සවි කිරීම</h3>
                     <ul>
                         <li><strong>PSU:</strong> කේසිං එකේ අදාළ ස්ථානයේ PSU එක තබා සවි කරන්න.</li>
-                        <li><strong>GPU:</strong> මවු පුවරුවේ ඇති PCI-E slot එකට ග්‍රැෆික් කාඩ්පත සවි කර කේසිං එකට ඇණ මඟින් සම්බන්ධ කරන්න.</li>
+                        <li><strong>GPU:</strong> මවු පුවරුවේ ඇති PCI-E slot එකට ග්‍රැෆික් කාඩ්පත සවි කර කේසිං එකට ඇණ
+                            මඟින් සම්බන්ධ කරන්න.</li>
                     </ul>
                 </div>
 
@@ -148,7 +174,8 @@
                     <ul>
                         <li>මවු පුවරුවට (24-pin) සහ CPU එකට (4/8-pin) බලය ලබා දෙන වයර් සම්බන්ධ කරන්න.</li>
                         <li>GPU එකට අවශ්‍ය බල සැපයුම් වයර් සම්බන්ධ කරන්න.</li>
-                        <li>කේසිං එකේ ඉදිරිපස ඇති Buttons (Power, Reset) සහ USB ports වල වයර් මවු පුවරුවේ අදාළ පින් වලට සම්බන්ධ කරන්න.</li>
+                        <li>කේසිං එකේ ඉදිරිපස ඇති Buttons (Power, Reset) සහ USB ports වල වයර් මවු පුවරුවේ අදාළ පින් වලට
+                            සම්බන්ධ කරන්න.</li>
                     </ul>
                 </div>
 
@@ -160,9 +187,61 @@
                         <li>ඉන්පසු Windows OS එක ඇතුළත් කර Drivers Update කරගන්න.</li>
                     </ul>
                     <div class="alert-box">
-                        <strong>විශේෂ උපදේශය:</strong> ස්ථිතික විද්‍යුතයෙන් (Static Electricity) කොටස් වලට හානි විය හැකි බැවින්, වැඩ ආරම්භ කිරීමට පෙර ලෝහමය මතුපිටක් ස්පර්ශ කර සිරුරේ ආරෝපණ ඉවත් කරගන්න.
+                        <strong>විශේෂ උපදේශය:</strong> ස්ථිතික විද්‍යුතයෙන් (Static Electricity) කොටස් වලට හානි විය හැකි
+                        බැවින්, වැඩ ආරම්භ කිරීමට පෙර ලෝහමය මතුපිටක් ස්පර්ශ කර සිරුරේ ආරෝපණ ඉවත් කරගන්න.
                     </div>
                 </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Page: LOGIN / REGISTER -->
+    <div id="page-login" class="page">
+        <section class="login-sec">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Login</button>
+                    <button class="auth-tab" id="tab-register" onclick="switchAuth('register')">Register</button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active-form" onsubmit="event.preventDefault(); alert('Login successful!'); navigateTo('home');">
+                    <h2>Welcome Back!</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Log in to access your account.</p>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" required>
+                    </div>
+                    <div style="text-align: right; margin-bottom: 1rem;">
+                        <a href="#" style="color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Login</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form" style="display: none;" onsubmit="event.preventDefault(); alert('Registration successful!'); navigateTo('home');">
+                    <h2>Create Account</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Join NexusRigs today.</p>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Register</button>
+                </form>
             </div>
         </section>
     </div>
@@ -172,7 +251,8 @@
         <div class="footer-content">
             <div class="footer-col" style="max-width: 300px;">
                 <div class="logo" style="margin-bottom: 1rem;">Nexus<span>Rigs</span></div>
-                <p style="color: var(--text-muted); line-height: 1.6;">Your ultimate destination for high-end PC parts and custom builds. Push the limits of technology with us.</p>
+                <p style="color: var(--text-muted); line-height: 1.6;">Your ultimate destination for high-end PC parts
+                    and custom builds. Push the limits of technology with us.</p>
             </div>
             <div class="footer-col">
                 <h4>Categories</h4>
@@ -238,7 +318,8 @@
         </div>
         <div class="chat-body" id="chatBody">
             <div class="chat-message bot-msg">
-                ආයුබෝවන්! මම NexusRigs AI සහායකයා. ඔබට අවශ්‍ය පරිගණක උපාංග ගැන දැනගැනීමට හෝ සහාය ලබාගැනීමට මෙහි පණිවිඩයක් යවන්න.
+                ආයුබෝවන්! මම NexusRigs AI සහායකයා. ඔබට අවශ්‍ය පරිගණක උපාංග ගැන දැනගැනීමට හෝ සහාය ලබාගැනීමට මෙහි
+                පණිවිඩයක් යවන්න.
             </div>
         </div>
         <div class="chat-input-area" id="chatInputArea">
@@ -250,4 +331,5 @@
     <!-- Script -->
     <script src="script.js"></script>
 </body>
+
 </html>
