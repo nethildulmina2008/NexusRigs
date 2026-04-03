@@ -52,16 +52,65 @@ const defaultProducts = [
     { id: 22, name: "Lenovo Legion 5 (Used)", category: "Laptop", condition: "Used", price: 290000, image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&w=600&q=80", description: "AMD Ryzen 7, RTX 3060, 16GB RAM." }
 ];
 
-let products = JSON.parse(localStorage.getItem('nexus_products')) || defaultProducts;
+let products = [];
+let orders = [];
+
+// ====== FIREBASE SETUP ======
+const firebaseConfig = {
+  apiKey: "AIzaSyDmo8Z16XTIC7AiwpaSFGwywCFv-iWtB7I",
+  authDomain: "nexus-2722e.firebaseapp.com",
+  projectId: "nexus-2722e",
+  storageBucket: "nexus-2722e.firebasestorage.app",
+  messagingSenderId: "1003347378649",
+  appId: "1:1003347378649:web:a39602f040014ab94219c8"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Listen to products in Realtime Database
+database.ref('products').on('value', (snapshot) => {
+    let data = snapshot.val();
+    if (data) {
+        // Firebase might store arrays as objects if there are empty slots. Ensure it's an array.
+        products = Array.isArray(data) ? data : Object.values(data);
+    } else {
+        products = defaultProducts;
+        saveProducts(); // Seed initial data
+    }
+    
+    // Auto-refresh UI on changes
+    if (currentCategory) {
+        renderCategoryProducts();
+    }
+    const adminPage = document.getElementById('page-admin');
+    if (adminPage && adminPage.classList.contains('active') && document.getElementById('tab-admin-products').classList.contains('active')) {
+        renderAdminProducts();
+    }
+});
 
 function saveProducts() {
-    localStorage.setItem('nexus_products', JSON.stringify(products));
+    database.ref('products').set(products);
 }
 
-let orders = JSON.parse(localStorage.getItem('nexus_orders')) || [];
+// Listen to orders in Realtime Database
+database.ref('orders').on('value', (snapshot) => {
+    let data = snapshot.val();
+    if (data) {
+        orders = Array.isArray(data) ? data : Object.values(data);
+    } else {
+        orders = [];
+    }
+    
+    const adminPage = document.getElementById('page-admin');
+    if (adminPage && adminPage.classList.contains('active') && document.getElementById('tab-admin-orders').classList.contains('active')) {
+        renderAdminOrders();
+    }
+});
 
 function saveOrders() {
-    localStorage.setItem('nexus_orders', JSON.stringify(orders));
+    database.ref('orders').set(orders);
 }
 
 let isAdmin = localStorage.getItem('nexus_admin') === 'true';
