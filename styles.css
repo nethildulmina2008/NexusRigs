@@ -114,11 +114,13 @@ nav {
 }
 
 .logo-img {
-    height: 50px;
+    height: 70px;
     width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 4px 6px rgba(255, 102, 0, 0.2));
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 2px 4px rgba(255, 102, 0, 0.15));
     transition: transform 0.3s ease;
+    margin-left: -10px; /* pull slightly to the left to offset image padding */
 }
 
 .logo-img:hover {
