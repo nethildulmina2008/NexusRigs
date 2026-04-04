@@ -1,28 +1,28 @@
 let productCategories = [
-    { id: "Display", name: "Displays & Screens", image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Display", name: "Displays & Screens", image: "https://images.unsplash.com/photo-1580522154071-c6ca47a859ad?ixlib=rb-4.0.3&w=600&q=80" },
     { id: "Battery", name: "Batteries", image: "https://images.unsplash.com/photo-1601524909162-ae8725290836?ixlib=rb-4.0.3&w=600&q=80" },
-    { id: "Housing", name: "Back Covers & Housing", image: "https://images.unsplash.com/photo-1591337676887-a4b7f041fb82?ixlib=rb-4.0.3&w=600&q=80" },
-    { id: "Flex", name: "Flex Cables & Ports", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cd8d3?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Housing", name: "Back Covers & Housing", image: "https://images.unsplash.com/photo-1605236453806-6ff36851218e?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Flex", name: "Flex Cables & Ports", image: "https://images.unsplash.com/photo-1563203369-26f2e4a5ccf7?ixlib=rb-4.0.3&w=600&q=80" },
     { id: "Motherboard", name: "Motherboards", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&w=600&q=80" },
     { id: "Camera", name: "Camera Modules", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&w=600&q=80" }
 ];
 
 const defaultProducts = [
     // Displays
-    { id: 1, name: "iPhone 13 Pro Max OLED Display", category: "Display", condition: "Brand New", price: 45000, image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80", description: "Original Pulled OLED Display for iPhone 13 Pro Max." },
-    { id: 2, name: "Samsung Galaxy S22 Ultra Display", category: "Display", condition: "Brand New", price: 55000, image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80", description: "Service Pack Original Display with frame." },
-    { id: 3, name: "iPhone X LCD Incell Screen", category: "Display", condition: "Brand New", price: 6500, image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80", description: "High-quality Incell aftermarket screen." },
+    { id: 1, name: "iPhone 13 Pro Max OLED Display", category: "Display", condition: "Brand New", price: 45000, image: "https://images.unsplash.com/photo-1580522154071-c6ca47a859ad?ixlib=rb-4.0.3&w=600&q=80", description: "Original Pulled OLED Display for iPhone 13 Pro Max." },
+    { id: 2, name: "Samsung Galaxy S22 Ultra Display", category: "Display", condition: "Brand New", price: 55000, image: "https://images.unsplash.com/photo-1580522154071-c6ca47a859ad?ixlib=rb-4.0.3&w=600&q=80", description: "Service Pack Original Display with frame." },
+    { id: 3, name: "iPhone X LCD Incell Screen", category: "Display", condition: "Brand New", price: 6500, image: "https://images.unsplash.com/photo-1580522154071-c6ca47a859ad?ixlib=rb-4.0.3&w=600&q=80", description: "High-quality Incell aftermarket screen." },
 
     // Batteries
     { id: 4, name: "iPhone 11 Original Battery", category: "Battery", condition: "Brand New", price: 7500, badge: "Best Seller", image: "https://images.unsplash.com/photo-1601524909162-ae8725290836?ixlib=rb-4.0.3&w=600&q=80", description: "100% Health Original capacity battery." },
     { id: 5, name: "Samsung A52 Battery (Used)", category: "Battery", condition: "Used", price: 2000, image: "https://images.unsplash.com/photo-1601524909162-ae8725290836?ixlib=rb-4.0.3&w=600&q=80", description: "Used battery with 85% remaining life." },
 
     // Housings
-    { id: 6, name: "iPhone 14 Back Glass Housing", category: "Housing", condition: "Brand New", price: 12500, image: "https://images.unsplash.com/photo-1591337676887-a4b7f041fb82?ixlib=rb-4.0.3&w=600&q=80", description: "Full back housing with small parts included." },
+    { id: 6, name: "iPhone 14 Back Glass Housing", category: "Housing", condition: "Brand New", price: 12500, image: "https://images.unsplash.com/photo-1605236453806-6ff36851218e?ixlib=rb-4.0.3&w=600&q=80", description: "Full back housing with small parts included." },
     
     // Flex Cables
-    { id: 7, name: "iPhone 12 Charging Port Flex", category: "Flex", condition: "Brand New", price: 3500, image: "https://images.unsplash.com/photo-1601784551446-20c9e07cd8d3?ixlib=rb-4.0.3&w=600&q=80", description: "Original charging port flex cable." },
-    { id: 8, name: "Redmi Note 10 Power Button Flex", category: "Flex", condition: "Brand New", price: 800, image: "https://images.unsplash.com/photo-1601784551446-20c9e07cd8d3?ixlib=rb-4.0.3&w=600&q=80", description: "Volume and Power button flex cable." },
+    { id: 7, name: "iPhone 12 Charging Port Flex", category: "Flex", condition: "Brand New", price: 3500, image: "https://images.unsplash.com/photo-1563203369-26f2e4a5ccf7?ixlib=rb-4.0.3&w=600&q=80", description: "Original charging port flex cable." },
+    { id: 8, name: "Redmi Note 10 Power Button Flex", category: "Flex", condition: "Brand New", price: 800, image: "https://images.unsplash.com/photo-1563203369-26f2e4a5ccf7?ixlib=rb-4.0.3&w=600&q=80", description: "Volume and Power button flex cable." },
 
     // Camera
     { id: 9, name: "iPhone 13 Pro Rear Camera Module", category: "Camera", condition: "Brand New", price: 18000, image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&w=600&q=80", description: "Original pulled rear camera." }
@@ -51,10 +51,10 @@ try {
 const database = firebase.database();
 
 // ONE TIME MIGRATION: Wipe old PC parts and replace with Phone parts
-if(!localStorage.getItem('zap_pro_migrated_v1')) {
+if(!localStorage.getItem('zap_pro_migrated_v2')) {
     database.ref('categories').set(productCategories);
     database.ref('products').set(defaultProducts);
-    localStorage.setItem('zap_pro_migrated_v1', 'true');
+    localStorage.setItem('zap_pro_migrated_v2', 'true');
 }
 
 // Listen to categories
