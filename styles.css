@@ -108,14 +108,21 @@ nav {
 }
 
 .logo {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: 1px;
     cursor: pointer;
-    color: #1a1a1a;
+    display: flex;
+    align-items: center;
 }
-.logo span {
-    color: var(--accent-cyan);
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(255, 102, 0, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
 }
 
 .nav-links {
