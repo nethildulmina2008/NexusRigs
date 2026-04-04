@@ -203,7 +203,7 @@
             <h2 class="section-title">Secure Checkout</h2>
             <div class="checkout-container">
                 <form class="checkout-form" id="checkoutForm" onsubmit="placeOrder(event)">
-                    <h3>Billing Details</h3>
+                    <h3>Billing & Delivery Details</h3>
                     <div class="input-group">
                         <i class="fas fa-user"></i>
                         <input type="text" id="chkName" placeholder="Full Name" required>
@@ -220,7 +220,33 @@
                         <i class="fas fa-city"></i>
                         <input type="text" id="chkCity" placeholder="City / Town" required>
                     </div>
-                    <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Place Order (Cash on Delivery)</button>
+
+                    <h3 style="margin-top: 2rem;">Payment Information</h3>
+                    <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent-cyan); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #fff;">
+                        <i class="fas fa-info-circle" style="color: var(--accent-cyan);"></i> <b>Test Mode Active:</b> Direct transfers to personal debit cards are blocked for security. Please use any dummy card details (e.g. 4242 4242...) to test the checkout flow. A real Payment Gateway (like PayHere) is required for real money.
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-credit-card"></i>
+                        <input type="text" id="chkCardName" placeholder="Name on Card" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="text" id="chkCardNo" placeholder="Card Number (Test: 4242 4242 4242 4242)" required maxlength="20">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="input-group" style="flex: 1;">
+                            <i class="far fa-calendar-alt"></i>
+                            <input type="text" id="chkCardExp" placeholder="MM/YY" required maxlength="5">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <i class="fas fa-lock"></i>
+                            <input type="text" id="chkCardCvc" placeholder="CVC" required maxlength="4">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 1.5rem; background: linear-gradient(135deg, #00cca3, #00b386); border: none; box-shadow: 0 4px 15px rgba(0, 204, 163, 0.3);">
+                        <i class="fas fa-lock" style="margin-right: 8px;"></i> Pay Securely & Place Order
+                    </button>
                 </form>
                 
                 <div class="order-summary">
@@ -266,24 +292,56 @@
                 </form>
 
                 <!-- Register Form -->
-                <form id="registerForm" class="auth-form" style="display: none;" onsubmit="event.preventDefault(); alert('Registration successful!'); navigateTo('home');">
+                <form id="registerForm" class="auth-form" style="display: none;" onsubmit="handleRegister(event)">
                     <h2>Create Account</h2>
                     <p style="color: var(--text-muted); margin-bottom: 2rem;">Join NexusRigs today.</p>
                     
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" placeholder="Full Name" required>
+                        <input type="text" id="regName" placeholder="Full Name" required>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Email Address" required>
+                        <input type="email" id="regEmail" placeholder="Email Address" required>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" required>
+                        <input type="password" id="regPass" placeholder="Password" required>
                     </div>
                     <button type="submit" class="btn" style="width: 100%;">Register</button>
                 </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Page: PROFILE -->
+    <div id="page-profile" class="page">
+        <section class="admin-sec"> <!-- Reusing admin styles for clean layout -->
+            <h2 class="section-title">My Profile & Orders</h2>
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 15px; padding: 2rem; margin-bottom: 2rem;">
+                <h3 id="profileNameDisplay">User Name</h3>
+                <p id="profileEmailDisplay" style="color: var(--text-muted);">user@example.com</p>
+                <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="logoutUser()">Logout</button>
+            </div>
+            
+            <div class="admin-header" style="border: none; padding-top: 0;">
+                <h3>My Order History</h3>
+            </div>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Payment</th>
+                            <th>Total (Rs.)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userOrdersTableBody">
+                        <!-- User orders injected here -->
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>
@@ -295,7 +353,9 @@
                 <h2 class="section-title" style="margin-bottom:0;">Admin Dashboard</h2>
                 <div class="auth-tabs" style="width: 100%; margin-bottom: 0;">
                     <button class="auth-tab active" id="tab-admin-products" onclick="switchAdminTab('products')">Products</button>
+                    <button class="auth-tab" id="tab-admin-categories" onclick="switchAdminTab('categories')">Categories</button>
                     <button class="auth-tab" id="tab-admin-orders" onclick="switchAdminTab('orders')">Orders</button>
+                    <button class="auth-tab" id="tab-admin-users" onclick="switchAdminTab('users')">Users</button>
                 </div>
             </div>
             
@@ -346,6 +406,57 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Categories View -->
+            <div id="admin-categories-view" style="display: none; margin-top: 1rem;">
+                <div class="admin-header" style="border: none; padding-top: 0;">
+                    <h3>Manage Categories</h3>
+                </div>
+                <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem;">
+                    <h4>Add New Category</h4>
+                    <form style="display: flex; gap: 1rem; margin-top: 1rem;" onsubmit="saveAdminCategory(event)">
+                        <input type="text" id="catAddName" placeholder="Category Name" required style="flex: 1;">
+                        <input type="url" id="catAddImage" placeholder="Image URL" required style="flex: 2;">
+                        <button type="submit" class="btn">Add Category</button>
+                    </form>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminCategoriesTableBody">
+                            <!-- Categories injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Users View -->
+            <div id="admin-users-view" style="display: none; margin-top: 1rem;">
+                <div class="admin-header" style="border: none; padding-top: 0;">
+                    <h3>Registered Users</h3>
+                    <div style="color: #ff4d4d; font-size: 0.8rem;"><i class="fas fa-exclamation-triangle"></i> Security Note: Passwords shown in plain-text for demo purposes only.</div>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email Address</th>
+                                <th>Password (Not Secure)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody">
+                            <!-- Users injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </section>
     </div>
 
@@ -364,15 +475,7 @@
 
             <label>Category</label>
             <select id="pCategory" required>
-                <option value="CPU">Processors (CPU)</option>
-                <option value="Motherboard">Motherboards</option>
-                <option value="RAM">Memory (RAM)</option>
-                <option value="Storage">SSD / HDD</option>
-                <option value="GPU">Graphics Cards</option>
-                <option value="Power Supply">Power Supply</option>
-                <option value="Casing">Casings</option>
-                <option value="Cooler">Coolers</option>
-                <option value="Laptop">Laptops</option>
+                <!-- Dynamically loaded categories -->
             </select>
 
             <label>Condition</label>

@@ -1,4 +1,4 @@
-const productCategories = [
+let productCategories = [
     { id: "CPU", name: "Processors (CPU)", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
     { id: "Motherboard", name: "Motherboards", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
     { id: "RAM", name: "Memory (RAM)", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
@@ -54,6 +54,7 @@ const defaultProducts = [
 
 let products = [];
 let orders = [];
+let allUsers = [];
 
 // ====== FIREBASE SETUP ======
 const firebaseConfig = {
@@ -73,7 +74,30 @@ try {
 
 const database = firebase.database();
 
-// Listen to products in Realtime Database
+// Listen to categories
+database.ref('categories').on('value', (snapshot) => {
+    let data = snapshot.val();
+    if (data) {
+        productCategories = Array.isArray(data) ? data : Object.values(data);
+    } else {
+        database.ref('categories').set(productCategories); // seed defaults
+    }
+    
+    populateAdminCategories();
+    // Only re-render if we are actively on shop categories page
+    const pageShop = document.getElementById('page-shop');
+    if (pageShop && pageShop.classList.contains('active') && !currentCategory) {
+        renderCategories();
+    }
+    
+    // Update admin view if active
+    const adminPage = document.getElementById('page-admin');
+    if (adminPage && adminPage.classList.contains('active') && document.getElementById('tab-admin-categories').classList.contains('active')) {
+        renderAdminCategories();
+    }
+});
+
+// Listen to products
 database.ref('products').on('value', (snapshot) => {
     let data = snapshot.val();
     if (data) {
@@ -90,17 +114,15 @@ database.ref('products').on('value', (snapshot) => {
     }
 }, (error) => {
     console.error("Firebase Read Error: ", error);
-    alert("Database sync failed. Is your Firebase Database Rules set to true? Error: " + error.message);
 });
 
 function saveProducts() {
     database.ref('products').set(products).catch(error => {
         console.error("Firebase Write Error: ", error);
-        alert("Failed to save. Check your Firebase permissions! Error: " + error.message);
     });
 }
 
-// Listen to orders in Realtime Database
+// Listen to orders
 database.ref('orders').on('value', (snapshot) => {
     let data = snapshot.val();
     if (data) {
@@ -119,7 +141,39 @@ function saveOrders() {
     database.ref('orders').set(orders);
 }
 
+// Listen to users
+database.ref('users').on('value', (snapshot) => {
+    let data = snapshot.val();
+    allUsers = [];
+    if (data) {
+        allUsers = Object.values(data);
+    }
+    
+    // Update local profile view if logged in
+    if(currentUserEmail && !isAdmin) {
+        const myUser = allUsers.find(u => u.email === currentUserEmail);
+        if(myUser) {
+            document.getElementById('profileNameDisplay').innerText = myUser.name;
+            document.getElementById('profileEmailDisplay').innerText = myUser.email;
+            renderUserOrders(myUser.orders || []);
+            
+            // Sync cart on initial load if local cart is empty
+            if(cart.length === 0 && myUser.cart && myUser.cart.length > 0) {
+                cart = myUser.cart;
+                updateCartIcon();
+                renderCart();
+            }
+        }
+    }
+
+    const adminPage = document.getElementById('page-admin');
+    if (adminPage && adminPage.classList.contains('active') && document.getElementById('tab-admin-users').classList.contains('active')) {
+        renderAdminUsers();
+    }
+});
+
 let isAdmin = localStorage.getItem('nexus_admin') === 'true';
+let currentUserEmail = localStorage.getItem('nexus_user');
 
 // --- APP STATE & ROUTING ---
 let cart = [];
@@ -141,6 +195,12 @@ function updateNavAuth() {
                 <i class="fas fa-sign-out-alt"></i>
             </div>
         `;
+    } else if (currentUserEmail) {
+        loginContainer.innerHTML = `
+            <div class="login-btn-top" onclick="navigateTo('profile')" style="background:var(--accent-cyan); color:#000;">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </div>
+        `;
     } else {
         loginContainer.innerHTML = `
             <div class="login-btn-top" onclick="navigateTo('login')">
@@ -155,6 +215,10 @@ function navigateTo(pageId) {
         alert('Access Denied');
         return;
     }
+    if (pageId === 'profile' && !currentUserEmail) {
+        alert('Please login first.');
+        return;
+    }
 
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById('page-' + pageId).classList.add('active');
@@ -164,9 +228,12 @@ function navigateTo(pageId) {
         document.getElementById('categoryGrid').style.display = 'grid';
         document.getElementById('productView').style.display = 'none';
         document.getElementById('shopTitle').innerText = 'Component Categories';
+        currentCategory = null;
     } else if(pageId === 'admin') {
         renderAdminProducts();
         renderAdminOrders();
+        renderAdminCategories();
+        renderAdminUsers();
         switchAdminTab('products');
     }
 }
@@ -174,12 +241,13 @@ function navigateTo(pageId) {
 // --- CATEGORY RENDERING ---
 function renderCategories() {
     const grid = document.getElementById('categoryGrid');
+    if(!grid) return;
     grid.innerHTML = '';
     
     productCategories.forEach(cat => {
         const card = document.createElement('div');
         card.className = 'category-card';
-        card.onclick = () => openCategory(cat.id);
+        card.onclick = () => openCategory(cat.id || cat.name);
         
         card.innerHTML = `
             <img src="${cat.image}" alt="${cat.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 15px rgba(0,229,255,0.2);">
@@ -189,17 +257,33 @@ function renderCategories() {
     });
 }
 
+function populateAdminCategories() {
+    const select = document.getElementById('pCategory');
+    if(select) {
+        select.innerHTML = '';
+        productCategories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat.name; // Use name as identifier
+            opt.innerText = cat.name;
+            select.appendChild(opt);
+        });
+    }
+}
+
 function openCategory(categoryId) {
     currentCategory = categoryId;
-    currentFilter = 'All'; // Reset filter when opening a new category
+    currentFilter = 'All'; // Reset filter
     
-    // Update filter buttons UI
     const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    buttons[0].classList.add('active'); // Set "All" as active
+    if(buttons.length > 0) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        buttons[0].classList.add('active');
+    }
 
-    const catName = productCategories.find(c => c.id === categoryId).name;
-    document.getElementById('shopTitle').innerText = catName;
+    const catObj = productCategories.find(c => (c.id || c.name) === categoryId);
+    if(catObj) {
+        document.getElementById('shopTitle').innerText = catObj.name;
+    }
     
     document.getElementById('categoryGrid').style.display = 'none';
     document.getElementById('productView').style.display = 'block';
@@ -226,7 +310,11 @@ function renderCategoryProducts() {
     const grid = document.getElementById('productGrid');
     grid.innerHTML = '';
     
-    let filteredList = products.filter(p => p.category === currentCategory);
+    // Find category name
+    const catObj = productCategories.find(c => (c.id || c.name) === currentCategory);
+    if(!catObj) return;
+
+    let filteredList = products.filter(p => p.category === catObj.name || p.category === catObj.id);
     
     if(currentFilter !== 'All') {
         filteredList = filteredList.filter(p => p.condition === currentFilter);
@@ -272,6 +360,13 @@ const cartBtnIcon = document.getElementById('cartBtn');
 const cartItemsContainer = document.getElementById('cartItemsContainer');
 const cartTotalValue = document.getElementById('cartTotalValue');
 
+function syncCartToDB() {
+    if(currentUserEmail && !isAdmin) {
+        const uKey = currentUserEmail.replace(/\./g, '_');
+        database.ref('users/' + uKey + '/cart').set(cart);
+    }
+}
+
 cartBtnIcon.addEventListener('click', () => {
     cartModal.classList.add('open');
     cartOverlay.style.display = 'block';
@@ -292,6 +387,7 @@ window.addToCart = function(productId, event) {
         cart.push(product);
         updateCartIcon();
         renderCart();
+        syncCartToDB();
         
         if(event) {
             const btn = event.target;
@@ -336,6 +432,7 @@ window.removeFromCart = function(index) {
     cart.splice(index, 1);
     updateCartIcon();
     renderCart();
+    syncCartToDB();
 };
 
 function updateCartIcon() {
@@ -346,6 +443,12 @@ function updateCartIcon() {
 window.proceedToCheckout = function() {
     if (cart.length === 0) {
         alert("Your cart is empty. Add some components first!");
+        return;
+    }
+    if (!currentUserEmail) {
+        alert("Please login or register to place an order.");
+        closeCart();
+        navigateTo('login');
         return;
     }
     closeCart();
@@ -381,78 +484,134 @@ window.placeOrder = function(e) {
         return;
     }
 
-    const orderData = {
-        id: "ORD-" + new Date().getTime(),
-        date: new Date().toLocaleDateString(),
-        customer: document.getElementById('chkName').value,
-        phone: document.getElementById('chkPhone').value,
-        address: document.getElementById('chkAddress').value + ", " + document.getElementById('chkCity').value,
-        items: [...cart],
-        total: cart.reduce((sum, item) => sum + item.price, 0)
-    };
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Processing Payment...';
+    btn.disabled = true;
 
-    orders.push(orderData);
-    saveOrders();
+    // Simulate payment gateway delay
+    setTimeout(() => {
+        let cardNum = document.getElementById('chkCardNo').value;
+        let last4 = cardNum.length > 4 ? cardNum.slice(-4) : "0000";
+        const orderId = "ORD-" + new Date().getTime();
 
-    alert("Order placed successfully! Thank you for choosing Nexus Rigs.");
-    
-    // Clear cart
-    cart = [];
-    updateCartIcon();
-    renderCart();
-    document.getElementById('checkoutForm').reset();
-    
-    navigateTo('home');
+        const orderData = {
+            id: orderId,
+            date: new Date().toLocaleDateString(),
+            customer: document.getElementById('chkName').value,
+            phone: document.getElementById('chkPhone').value,
+            address: document.getElementById('chkAddress').value + ", " + document.getElementById('chkCity').value,
+            paymentMethod: "Online Card (**** " + last4 + ")",
+            items: [...cart],
+            total: cart.reduce((sum, item) => sum + item.price, 0)
+        };
+
+        orders.push(orderData);
+        saveOrders();
+
+        // Save order to User profile
+        if(currentUserEmail) {
+            const uKey = currentUserEmail.replace(/\./g, '_');
+            const myUser = allUsers.find(u => u.email === currentUserEmail);
+            if(myUser) {
+                let userOrders = myUser.orders || [];
+                userOrders.push(orderData);
+                database.ref('users/' + uKey + '/orders').set(userOrders);
+            }
+        }
+
+        alert("Payment Successful! 💰\\nYour order code is " + orderId + ". Thank you for choosing Nexus Rigs.");
+        
+        // Clear cart
+        cart = [];
+        updateCartIcon();
+        renderCart();
+        syncCartToDB(); // clear db cart
+        document.getElementById('checkoutForm').reset();
+        
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+
+        navigateTo('profile');
+    }, 2000); // 2 seconds processing delay
 };
 
-// --- MOBILE MENU ---
-const menuBtn = document.getElementById('menuBtn');
-const navLinks = document.getElementById('navLinks');
+// --- AUTHENTICATION ---
+window.handleRegister = function(e) {
+    e.preventDefault();
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const pass = document.getElementById('regPass').value;
+    const uKey = email.replace(/\./g, '_');
 
-function checkMobileMenu() {
-    if(window.innerWidth <= 900) {
-        menuBtn.style.display = 'block';
-    } else {
-        menuBtn.style.display = 'none';
-        navLinks.style.display = 'flex';
-    }
-}
-menuBtn.addEventListener('click', () => {
-    if(navLinks.style.display === 'flex') {
-        navLinks.style.display = 'none';
-    } else {
-        navLinks.style.display = 'flex';
-        navLinks.style.flexDirection = 'column';
-        navLinks.style.position = 'absolute';
-        navLinks.style.top = '70px';
-        navLinks.style.left = '0';
-        navLinks.style.width = '100%';
-        navLinks.style.background = 'var(--bg-glass)';
-        navLinks.style.padding = '2rem';
-        navLinks.style.backdropFilter = 'blur(16px)';
-        navLinks.style.borderBottom = '1px solid var(--border-glass)';
-    }
-});
-window.addEventListener('resize', checkMobileMenu);
+    database.ref('users/' + uKey).once('value', snapshot => {
+        if (snapshot.exists()) {
+            alert("Email already registered!");
+        } else {
+            const newUser = { name, email, password: pass, cart: [], orders: [] };
+            database.ref('users/' + uKey).set(newUser).then(() => {
+                alert("Registration successful! You are now logged in.");
+                currentUserEmail = email;
+                localStorage.setItem('nexus_user', email);
+                updateNavAuth();
+                navigateTo('home');
+                document.getElementById('registerForm').reset();
+            });
+        }
+    });
+};
 
-// --- ADMIN SYSTEM ---
-function handleLogin(e) {
+window.handleLogin = function(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const pass = document.getElementById('loginPass').value;
 
     if (email === 'nethildulmina2008@gmail.com' && pass === 'SANdeepa@346') {
         isAdmin = true;
+        currentUserEmail = null;
         localStorage.setItem('nexus_admin', 'true');
+        localStorage.removeItem('nexus_user');
         alert('Admin Login Successful!');
         updateNavAuth();
         navigateTo('admin');
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPass').value = '';
-    } else {
-        alert('Invalid Admin Credentials!');
+        document.getElementById('loginForm').reset();
+        return;
     }
-}
+
+    const uKey = email.replace(/\./g, '_');
+    database.ref('users/' + uKey).once('value', snapshot => {
+        if(snapshot.exists() && snapshot.val().password === pass) {
+            currentUserEmail = email;
+            isAdmin = false;
+            localStorage.removeItem('nexus_admin');
+            localStorage.setItem('nexus_user', email);
+            updateNavAuth();
+            alert("Login successful!");
+            
+            // Load user cart
+            if(snapshot.val().cart) {
+                cart = snapshot.val().cart;
+                updateCartIcon();
+                renderCart();
+            }
+            
+            navigateTo('home');
+            document.getElementById('loginForm').reset();
+        } else {
+            alert("Invalid Email or Password!");
+        }
+    });
+};
+
+window.logoutUser = function() {
+    currentUserEmail = null;
+    cart = [];
+    localStorage.removeItem('nexus_user');
+    updateCartIcon();
+    renderCart();
+    updateNavAuth();
+    navigateTo('home');
+};
 
 window.logoutAdmin = function() {
     isAdmin = false;
@@ -462,7 +621,51 @@ window.logoutAdmin = function() {
     alert('Logged out from Admin Panel.');
 };
 
-// Admin UI Logic
+window.switchAuth = function(mode) {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    
+    if(mode === 'login') {
+        loginForm.style.display = 'flex';
+        registerForm.style.display = 'none';
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+    } else {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'flex';
+        tabLogin.classList.remove('active');
+        tabRegister.classList.add('active');
+    }
+};
+
+// User Profile Rendering
+function renderUserOrders(ordersList) {
+    const tbody = document.getElementById('userOrdersTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    
+    if(!ordersList || ordersList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No orders found.</td></tr>';
+        return;
+    }
+    
+    const sorted = [...ordersList].reverse();
+    sorted.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="font-weight:bold; color:var(--accent-cyan);">${o.id}</td>
+            <td>${o.date}</td>
+            <td>${o.paymentMethod || 'Online'}</td>
+            <td style="font-weight:bold;">${formatLKR(o.total)}</td>
+            <td><span style="background:rgba(0,255,100,0.2); color:#00ff88; padding:4px 8px; border-radius:5px; font-size:0.8rem;">Processing</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// --- ADMIN SYSTEM ---
 function renderAdminProducts() {
     const tbody = document.getElementById('adminTableBody');
     tbody.innerHTML = '';
@@ -525,13 +728,11 @@ window.saveAdminProduct = function(e) {
     };
 
     if (idVal) {
-        // Edit existing
         const index = products.findIndex(p => p.id == idVal);
         if(index !== -1) {
             products[index] = { ...products[index], ...productData };
         }
     } else {
-        // Add new
         const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
         productData.id = newId;
         products.push(productData);
@@ -540,8 +741,6 @@ window.saveAdminProduct = function(e) {
     saveProducts();
     closeAdminModal();
     renderAdminProducts();
-    
-    // Refresh shop view if user goes back to components page
     renderCategoryProducts(); 
 };
 
@@ -556,9 +755,13 @@ window.deleteAdminProduct = function(id) {
 window.switchAdminTab = function(tabId) {
     document.getElementById('tab-admin-products').classList.remove('active');
     document.getElementById('tab-admin-orders').classList.remove('active');
+    document.getElementById('tab-admin-categories').classList.remove('active');
+    document.getElementById('tab-admin-users').classList.remove('active');
     
     document.getElementById('admin-products-view').style.display = 'none';
     document.getElementById('admin-orders-view').style.display = 'none';
+    document.getElementById('admin-categories-view').style.display = 'none';
+    document.getElementById('admin-users-view').style.display = 'none';
     
     document.getElementById('tab-admin-' + tabId).classList.add('active');
     document.getElementById('admin-' + tabId + '-view').style.display = 'block';
@@ -574,9 +777,7 @@ function renderAdminOrders() {
         return;
     }
 
-    // Sort newest first
     const sortedOrders = [...orders].reverse();
-    
     sortedOrders.forEach(o => {
         const itemsList = o.items.map(i => i.name).join(', ');
         const tr = document.createElement('tr');
@@ -604,6 +805,66 @@ window.clearOrders = function() {
         renderAdminOrders();
     }
 };
+
+window.saveAdminCategory = function(e) {
+    e.preventDefault();
+    const name = document.getElementById('catAddName').value;
+    const image = document.getElementById('catAddImage').value;
+    const id = name.replace(/\s+/g, '-');
+    
+    productCategories.push({id, name, image});
+    database.ref('categories').set(productCategories);
+    
+    document.getElementById('catAddName').value = '';
+    document.getElementById('catAddImage').value = '';
+    alert("Category Added Successfully!");
+};
+
+function renderAdminCategories() {
+    const tbody = document.getElementById('adminCategoriesTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    
+    productCategories.forEach((cat, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><img src="${cat.image}" class="admin-prod-img" alt="${cat.name}"></td>
+            <td style="font-weight:bold;">${cat.name}</td>
+            <td>
+                <button class="action-btn delete-btn" onclick="deleteAdminCategory(${index})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+window.deleteAdminCategory = function(index) {
+    if(confirm("Delete this category?")) {
+        productCategories.splice(index, 1);
+        database.ref('categories').set(productCategories);
+    }
+};
+
+function renderAdminUsers() {
+    const tbody = document.getElementById('adminUsersTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    
+    if(allUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No registered users yet.</td></tr>';
+        return;
+    }
+    
+    allUsers.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${u.name}</strong></td>
+            <td>${u.email}</td>
+            <td style="color: #ffcc00; font-family: monospace;">${u.password}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
 // --- CHATBOT ---
 const chatWidget = document.getElementById('chatWidget');
@@ -637,26 +898,36 @@ function sendMessage() {
 sendChatBtn.addEventListener('click', sendMessage);
 chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 
+// --- MOBILE MENU ---
+const menuBtn = document.getElementById('menuBtn');
+const navLinks = document.getElementById('navLinks');
+
+function checkMobileMenu() {
+    if(window.innerWidth <= 900) {
+        menuBtn.style.display = 'block';
+    } else {
+        menuBtn.style.display = 'none';
+        navLinks.style.display = 'flex';
+    }
+}
+menuBtn.addEventListener('click', () => {
+    if(navLinks.style.display === 'flex') {
+        navLinks.style.display = 'none';
+    } else {
+        navLinks.style.display = 'flex';
+        navLinks.style.flexDirection = 'column';
+        navLinks.style.position = 'absolute';
+        navLinks.style.top = '70px';
+        navLinks.style.left = '0';
+        navLinks.style.width = '100%';
+        navLinks.style.background = 'var(--bg-glass)';
+        navLinks.style.padding = '2rem';
+        navLinks.style.backdropFilter = 'blur(16px)';
+        navLinks.style.borderBottom = '1px solid var(--border-glass)';
+    }
+});
+window.addEventListener('resize', checkMobileMenu);
+
 // Init
 checkMobileMenu();
 updateNavAuth();
-
-// Auth Logic
-window.switchAuth = function(mode) {
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const tabLogin = document.getElementById('tab-login');
-    const tabRegister = document.getElementById('tab-register');
-    
-    if(mode === 'login') {
-        loginForm.style.display = 'flex';
-        registerForm.style.display = 'none';
-        tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
-    } else {
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'flex';
-        tabLogin.classList.remove('active');
-        tabRegister.classList.add('active');
-    }
-};
