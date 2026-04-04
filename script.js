@@ -1,55 +1,31 @@
 let productCategories = [
-    { id: "CPU", name: "Processors (CPU)", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Motherboard", name: "Motherboards", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "RAM", name: "Memory (RAM)", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Storage", name: "SSD / HDD", image: "https://images.unsplash.com/photo-1592659762303-90081d34b277?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "GPU", name: "Graphics Cards", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Power Supply", name: "Power Supply", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Casing", name: "Casings", image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Cooler", name: "Coolers", image: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" },
-    { id: "Laptop", name: "Laptops", image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" }
+    { id: "Display", name: "Displays & Screens", image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Battery", name: "Batteries", image: "https://images.unsplash.com/photo-1601524909162-ae8725290836?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Housing", name: "Back Covers & Housing", image: "https://images.unsplash.com/photo-1591337676887-a4b7f041fb82?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Flex", name: "Flex Cables & Ports", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cd8d3?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Motherboard", name: "Motherboards", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&w=600&q=80" },
+    { id: "Camera", name: "Camera Modules", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&w=600&q=80" }
 ];
 
 const defaultProducts = [
-    // CPUs
-    { id: 1, name: "Intel Core i9-14900K", category: "CPU", condition: "Brand New", price: 220000, image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&w=600&q=80", description: "24-Core, 32-Thread Unlocked Processor." },
-    { id: 2, name: "AMD RYZEN 5 3400G TRAY", category: "CPU", condition: "Used", price: 27500, image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&w=600&q=80", description: "Without cooler, 03 Months Warranty." },
-    { id: 3, name: "Intel Core i5-12400F", category: "CPU", condition: "Brand New", price: 55000, image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&w=600&q=80", description: "LGA1700 Brand New CPU with Cooler." },
+    // Displays
+    { id: 1, name: "iPhone 13 Pro Max OLED Display", category: "Display", condition: "Brand New", price: 45000, image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80", description: "Original Pulled OLED Display for iPhone 13 Pro Max." },
+    { id: 2, name: "Samsung Galaxy S22 Ultra Display", category: "Display", condition: "Brand New", price: 55000, image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80", description: "Service Pack Original Display with frame." },
+    { id: 3, name: "iPhone X LCD Incell Screen", category: "Display", condition: "Brand New", price: 6500, image: "https://images.unsplash.com/photo-1592899677974-bed54b5dfd4f?ixlib=rb-4.0.3&w=600&q=80", description: "High-quality Incell aftermarket screen." },
 
-    // GPUs
-    { id: 4, name: "ASUS DUAL RTX5060 8GB GDDR7", category: "GPU", condition: "Brand New", price: 155000, badge: "New Arrival", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&w=600&q=80", description: "Brand New Graphics Card (03 Years Warranty)" },
-    { id: 5, name: "RTX 2060 8GB USED", category: "GPU", condition: "Used", price: 70000, image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&w=600&q=80", description: "Random brand, Used condition. 3 Months warranty." },
-    { id: 6, name: "MSI GeForce RTX 4090 SUPRIM", category: "GPU", condition: "Brand New", price: 850000, image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&w=600&q=80", description: "The ultimate flagship graphics block." },
+    // Batteries
+    { id: 4, name: "iPhone 11 Original Battery", category: "Battery", condition: "Brand New", price: 7500, badge: "Best Seller", image: "https://images.unsplash.com/photo-1601524909162-ae8725290836?ixlib=rb-4.0.3&w=600&q=80", description: "100% Health Original capacity battery." },
+    { id: 5, name: "Samsung A52 Battery (Used)", category: "Battery", condition: "Used", price: 2000, image: "https://images.unsplash.com/photo-1601524909162-ae8725290836?ixlib=rb-4.0.3&w=600&q=80", description: "Used battery with 85% remaining life." },
 
-    // Motherboards
-    { id: 7, name: "ASUS ROG Maximus Z890", category: "Motherboard", condition: "Brand New", price: 245000, image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&w=600&q=80", description: "Premium motherboard Wi-Fi 7, DDR5." },
-    { id: 8, name: "ASROCK AB350 M.2 Motherboard", category: "Motherboard", condition: "Used", price: 15500, image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&w=600&q=80", description: "Used 4 RAM slot motherboard." },
+    // Housings
+    { id: 6, name: "iPhone 14 Back Glass Housing", category: "Housing", condition: "Brand New", price: 12500, image: "https://images.unsplash.com/photo-1591337676887-a4b7f041fb82?ixlib=rb-4.0.3&w=600&q=80", description: "Full back housing with small parts included." },
     
-    // RAM
-    { id: 9, name: "Corsair Vengeance RGB 16GB", category: "RAM", condition: "Brand New", price: 24500, image: "https://images.unsplash.com/photo-1562976540-1502c2145186?ixlib=rb-4.0.3&w=600&q=80", description: "16GB DDR5 5200MHz RAM." },
-    { id: 10, name: "Kingston FURY Beast 8GB DDR4", category: "RAM", condition: "Used", price: 6500, image: "https://images.unsplash.com/photo-1562976540-1502c2145186?ixlib=rb-4.0.3&w=600&q=80", description: "8GB DDR4 3200MHz Used." },
+    // Flex Cables
+    { id: 7, name: "iPhone 12 Charging Port Flex", category: "Flex", condition: "Brand New", price: 3500, image: "https://images.unsplash.com/photo-1601784551446-20c9e07cd8d3?ixlib=rb-4.0.3&w=600&q=80", description: "Original charging port flex cable." },
+    { id: 8, name: "Redmi Note 10 Power Button Flex", category: "Flex", condition: "Brand New", price: 800, image: "https://images.unsplash.com/photo-1601784551446-20c9e07cd8d3?ixlib=rb-4.0.3&w=600&q=80", description: "Volume and Power button flex cable." },
 
-    // Storage
-    { id: 11, name: "Samsung 990 PRO 2TB NVMe", category: "Storage", condition: "Brand New", price: 58000, image: "https://images.unsplash.com/photo-1592659762303-90081d34b277?ixlib=rb-4.0.3&w=600&q=80", description: "Blazing fast PCIe 4.0 NVMe SSD." },
-    { id: 12, name: "128GB USED SATA SSD", category: "Storage", condition: "Used", price: 6500, image: "https://images.unsplash.com/photo-1592659762303-90081d34b277?ixlib=rb-4.0.3&w=600&q=80", description: "128GB SATA SSD - Random Brand." },
-    { id: 13, name: "Seagate Barracuda 1TB HDD", category: "Storage", condition: "Brand New", price: 15500, image: "https://images.unsplash.com/photo-1592659762303-90081d34b277?ixlib=rb-4.0.3&w=600&q=80", description: "1TB 7200RPM Desktop internal hard drive." },
-
-    // Casings
-    { id: 14, name: "Lian Li O11 Dynamic EVO", category: "Casing", condition: "Brand New", price: 55000, image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&w=600&q=80", description: "Premium dual-chamber chassis." },
-    { id: 15, name: "Used Standard ATX Casing", category: "Casing", condition: "Used", price: 4500, image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&w=600&q=80", description: "Used case with minor scratches." },
-
-    // Coolers
-    { id: 16, name: "NZXT Kraken Elite 360", category: "Cooler", condition: "Brand New", price: 95000, image: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&w=600&q=80", description: "AIO Liquid cooler with LCD screen." },
-    { id: 17, name: "Intel Stock Cooler", category: "Cooler", condition: "Used", price: 1500, image: "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&w=600&q=80", description: "Used original intel air cooler." },
-
-    // Power Supply
-    { id: 18, name: "Corsair RM850x 80+ Gold", category: "Power Supply", condition: "Brand New", price: 45000, image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&w=600&q=80", description: "850W Fully modular power supply." },
-    { id: 19, name: "Used 500W Bronze PSU", category: "Power Supply", condition: "Used", price: 8500, image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&w=600&q=80", description: "Standard 500W PSU used for 1 year." },
-
-    // Laptops
-    { id: 20, name: "ASUS ROG Strix G16", category: "Laptop", condition: "Brand New", price: 450000, image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&w=600&q=80", description: "Intel i7 13th Gen, RTX 4060, 16GB RAM, 1TB SSD." },
-    { id: 21, name: "MSI Katana 15", category: "Laptop", condition: "Brand New", price: 380000, image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&w=600&q=80", description: "Intel i7 12th Gen, RTX 3050, 8GB RAM, 512GB SSD." },
-    { id: 22, name: "Lenovo Legion 5 (Used)", category: "Laptop", condition: "Used", price: 290000, image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&w=600&q=80", description: "AMD Ryzen 7, RTX 3060, 16GB RAM." }
+    // Camera
+    { id: 9, name: "iPhone 13 Pro Rear Camera Module", category: "Camera", condition: "Brand New", price: 18000, image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&w=600&q=80", description: "Original pulled rear camera." }
 ];
 
 let products = [];
@@ -73,6 +49,13 @@ try {
 } catch (e) {}
 
 const database = firebase.database();
+
+// ONE TIME MIGRATION: Wipe old PC parts and replace with Phone parts
+if(!localStorage.getItem('zap_pro_migrated_v1')) {
+    database.ref('categories').set(productCategories);
+    database.ref('products').set(defaultProducts);
+    localStorage.setItem('zap_pro_migrated_v1', 'true');
+}
 
 // Listen to categories
 database.ref('categories').on('value', (snapshot) => {
@@ -544,7 +527,7 @@ window.placeOrder = function(e) {
             }
         }
 
-        alert("Order Successful! \\nYour order code is " + orderId + ". Thank you for choosing Nexus Rigs.");
+        alert("Order Successful! \\nYour order code is " + orderId + ". Thank you for choosing Zap Pro.");
         
         // Clear cart
         cart = [];
@@ -975,3 +958,4 @@ window.addEventListener('resize', checkMobileMenu);
 // Init
 checkMobileMenu();
 updateNavAuth();
+
