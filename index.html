@@ -222,30 +222,38 @@
                     </div>
 
                     <h3 style="margin-top: 2rem;">Payment Information</h3>
-                    <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent-cyan); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #fff;">
-                        <i class="fas fa-info-circle" style="color: var(--accent-cyan);"></i> <b>Test Mode Active:</b> Direct transfers to personal debit cards are blocked for security. Please use any dummy card details (e.g. 4242 4242...) to test the checkout flow. A real Payment Gateway (like PayHere) is required for real money.
+                    <div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--bg-glass); padding: 10px; border-radius: 5px; border: 1px solid var(--border-glass);">
+                            <input type="radio" name="paymentOption" value="COD" checked onchange="togglePaymentOptions(this.value)"> Cash on Delivery (3-5 days)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--bg-glass); padding: 10px; border-radius: 5px; border: 1px solid var(--border-glass);">
+                            <input type="radio" name="paymentOption" value="ONLINE" onchange="togglePaymentOptions(this.value)"> Online Payment
+                        </label>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-credit-card"></i>
-                        <input type="text" id="chkCardName" placeholder="Name on Card" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-hashtag"></i>
-                        <input type="text" id="chkCardNo" placeholder="Card Number (Test: 4242 4242 4242 4242)" required maxlength="20">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="input-group" style="flex: 1;">
-                            <i class="far fa-calendar-alt"></i>
-                            <input type="text" id="chkCardExp" placeholder="MM/YY" required maxlength="5">
+
+                    <div id="onlinePaymentFields" style="display: none;">
+                        <div class="input-group">
+                            <i class="fas fa-credit-card"></i>
+                            <input type="text" id="chkCardName" placeholder="Name on Card">
                         </div>
-                        <div class="input-group" style="flex: 1;">
-                            <i class="fas fa-lock"></i>
-                            <input type="text" id="chkCardCvc" placeholder="CVC" required maxlength="4">
+                        <div class="input-group">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="text" id="chkCardNo" placeholder="Card Number" maxlength="20">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="input-group" style="flex: 1;">
+                                <i class="far fa-calendar-alt"></i>
+                                <input type="text" id="chkCardExp" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <i class="fas fa-lock"></i>
+                                <input type="text" id="chkCardCvc" placeholder="CVC" maxlength="4">
+                            </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn" style="width: 100%; margin-top: 1.5rem; background: linear-gradient(135deg, #00cca3, #00b386); border: none; box-shadow: 0 4px 15px rgba(0, 204, 163, 0.3);">
-                        <i class="fas fa-lock" style="margin-right: 8px;"></i> Pay Securely & Place Order
+                    <button type="submit" class="btn" id="placeOrderBtn" style="width: 100%; margin-top: 1.5rem; background: linear-gradient(135deg, #00cca3, #00b386); border: none; box-shadow: 0 4px 15px rgba(0, 204, 163, 0.3);">
+                        <i class="fas fa-truck" id="btnIcon" style="margin-right: 8px;"></i> <span id="btnText">Place Order (COD)</span>
                     </button>
                 </form>
                 
@@ -571,9 +579,12 @@
             <i class="fas fa-chevron-down" id="chatToggleIcon"></i>
         </div>
         <div class="chat-body" id="chatBody">
-            <div class="chat-message bot-msg">
-                ආයුබෝවන්! මම NexusRigs AI සහායකයා. ඔබට අවශ්‍ය පරිගණක උපාංග ගැන දැනගැනීමට හෝ සහාය ලබාගැනීමට මෙහි
-                පණිවිඩයක් යවන්න.
+            <div class="chat-message bot-msg" id="chatOptionsContainer">
+                ආයුබෝවන්! මම NexusRigs සහායකයා. කරුණාකර ඔබට අවශ්‍ය සේවාව තෝරන්න:<br><br>
+                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 5px; padding: 5px; font-size: 0.9rem;" onclick="selectChatOption('AI')"><i class="fas fa-robot"></i> AI Bot සමග කතා කරන්න</button>
+                <a href="https://wa.me/94741304285" target="_blank" style="text-decoration: none;">
+                    <button class="btn btn-secondary" style="width: 100%; padding: 5px; font-size: 0.9rem;"><i class="fab fa-whatsapp"></i> WhatsApp හරහා සම්බන්ධ වන්න</button>
+                </a>
             </div>
         </div>
         <div class="chat-input-area" id="chatInputArea">

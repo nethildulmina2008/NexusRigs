@@ -477,6 +477,23 @@ function renderCheckoutSummary() {
     totalEl.innerText = formatLKR(total);
 }
 
+window.togglePaymentOptions = function(value) {
+    const fields = document.getElementById('onlinePaymentFields');
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    if(value === 'ONLINE') {
+        fields.style.display = 'block';
+        btnText.innerText = 'Pay Securely & Place Order';
+        btnIcon.className = 'fas fa-lock';
+        document.getElementById('chkCardNo').required = true;
+    } else {
+        fields.style.display = 'none';
+        btnText.innerText = 'Place Order (COD)';
+        btnIcon.className = 'fas fa-truck';
+        document.getElementById('chkCardNo').required = false;
+    }
+};
+
 window.placeOrder = function(e) {
     e.preventDefault();
     if (cart.length === 0) {
@@ -485,14 +502,21 @@ window.placeOrder = function(e) {
     }
 
     const btn = e.target.querySelector('button[type="submit"]');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Processing Payment...';
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Processing...';
     btn.disabled = true;
+
+    const paymentMethodSelected = document.querySelector('input[name="paymentOption"]:checked').value;
 
     // Simulate payment gateway delay
     setTimeout(() => {
-        let cardNum = document.getElementById('chkCardNo').value;
-        let last4 = cardNum.length > 4 ? cardNum.slice(-4) : "0000";
+        let paymentDesc = "Cash on Delivery";
+        if(paymentMethodSelected === 'ONLINE') {
+            let cardNum = document.getElementById('chkCardNo').value;
+            let last4 = cardNum.length > 4 ? cardNum.slice(-4) : "0000";
+            paymentDesc = "Online Card (**** " + last4 + ")";
+        }
+        
         const orderId = "ORD-" + new Date().getTime();
 
         const orderData = {
@@ -501,7 +525,7 @@ window.placeOrder = function(e) {
             customer: document.getElementById('chkName').value,
             phone: document.getElementById('chkPhone').value,
             address: document.getElementById('chkAddress').value + ", " + document.getElementById('chkCity').value,
-            paymentMethod: "Online Card (**** " + last4 + ")",
+            paymentMethod: paymentDesc,
             items: [...cart],
             total: cart.reduce((sum, item) => sum + item.price, 0)
         };
@@ -520,7 +544,7 @@ window.placeOrder = function(e) {
             }
         }
 
-        alert("Payment Successful! 💰\\nYour order code is " + orderId + ". Thank you for choosing Nexus Rigs.");
+        alert("Order Successful! \\nYour order code is " + orderId + ". Thank you for choosing Nexus Rigs.");
         
         // Clear cart
         cart = [];
@@ -529,7 +553,7 @@ window.placeOrder = function(e) {
         syncCartToDB(); // clear db cart
         document.getElementById('checkoutForm').reset();
         
-        btn.innerHTML = originalText;
+        btn.innerHTML = originalHTML;
         btn.disabled = false;
 
         navigateTo('profile');
@@ -875,6 +899,20 @@ const sendChatBtn = document.getElementById('sendChatBtn');
 
 chatHeader.addEventListener('click', () => chatWidget.classList.toggle('open'));
 
+let aiModeActive = false;
+
+window.selectChatOption = function(option) {
+    if(option === 'AI') {
+        aiModeActive = true;
+        document.getElementById('chatOptionsContainer').style.display = 'none';
+        const bMsg = document.createElement('div');
+        bMsg.className = 'chat-message bot-msg';
+        bMsg.innerText = "ඔබ දැන් AI Bot සමග සම්බන්ධ වී සිටී. ගැටළුවක් ඇත්නම් අසන්න.";
+        chatBody.appendChild(bMsg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+};
+
 function sendMessage() {
     const text = chatInput.value.trim();
     if(text !== "") {
@@ -889,7 +927,13 @@ function sendMessage() {
         setTimeout(() => {
             const bMsg = document.createElement('div');
             bMsg.className = 'chat-message bot-msg';
-            bMsg.innerHTML = "ඔබට සහාය වීමට මා සූදානම්! කරුණාකර අපගේ WhatsApp අංකය හරහා සම්බන්ධ වන්න: <br><br> <a href='https://wa.me/94741304285' target='_blank' style='color:var(--accent-cyan); font-weight:bold; text-decoration:none;'><i class='fab fa-whatsapp'></i> +94 74 130 4285 වෙත පිවිසෙන්න</a>";
+            
+            if(aiModeActive) {
+                bMsg.innerText = "මෙම උපකරණය ගැන දැනට තොරතුරු සොයාගත නොහැක. සාමාන්‍යයෙන් අපගේ සියලුම අලුත් කොටස් සඳහා වසර 3 ක වගකීමක් හිමිවේ.";
+            } else {
+                bMsg.innerHTML = "කරුණාකර ඉහත විකල්පයකින් එකක් තෝරන්න.";
+            }
+            
             chatBody.appendChild(bMsg);
             chatBody.scrollTop = chatBody.scrollHeight;
         }, 1000);
